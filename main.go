@@ -8,22 +8,25 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/cors"
+	"github.com/tondro1/actual-test/internal/database"
 )
 
-type db struct {
-
+type apiCfg struct {
+	db *database.Queries
 }
-
+const DB_URL = "postgres://alexchoi:@localhost:5432/main-go?sslmode=disable"
 func main() {
 	// compile templates
 	// templates := map[string]*template.Template{}
 	// tmpIndex := template.Must(template.ParseFiles("./public/root.html"))
 	// templates["index"] = tmpIndex
-	conn, err := pgx.Connect(context.Background(), "postgres://alexchoi:@localhost:5432/main-go?sslmode=disable")
+	conn, err := pgx.Connect(context.Background(), DB_URL)
 	if err != nil {
 		log.Fatal("Unable to connect to database:", err)
 	}
 	defer conn.Close(context.Background())
+
+	db := apiCfg{db: database.New(conn)}
 
 	pageRouter := chi.NewRouter()
 	apiRouter := chi.NewRouter()

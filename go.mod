@@ -1,4 +1,4 @@
-module github/tondro1/test
+module github.com/tondro1/actual-test
 
 go 1.21.6
 
