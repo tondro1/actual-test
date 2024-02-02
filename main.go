@@ -26,14 +26,14 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	db := apiCfg{db: database.New(conn)}
+	api := apiCfg{db: database.New(conn)}
 
 	pageRouter := chi.NewRouter()
 	apiRouter := chi.NewRouter()
 	
 	// Data API
 	apiRouter.Use(cors.AllowAll().Handler)
-	apiRouter.Post("/register", register)
+	apiRouter.Post("/register", api.register)
 
 	go func() {
 		log.Println("Starting server on localhost:1324")

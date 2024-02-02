@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-func register(w http.ResponseWriter, r *http.Request) {
+func (*apiCfg) register(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error parsing form:", err)
