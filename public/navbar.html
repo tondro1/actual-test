@@ -1,0 +1,24 @@
+{{define "navbar"}}
+<ul class="menu menu-horizontal bg-base">
+    <li>
+        <a
+            hx-get="/"
+            hx-trigger="click"
+            hx-target="#app"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            >Home</a
+        >
+    </li>
+    <li>
+        <a
+            hx-get="/login"
+            hx-trigger="click"
+            hx-target="#app"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            >Login</a
+        >
+    </li>
+</ul>
+{{end}}

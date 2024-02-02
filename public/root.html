@@ -1,0 +1,25 @@
+{{block "root" .}}
+<!DOCTYPE html>
+<html lang="en" data-theme="dim">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/tailwind.css" />
+        <script
+            src="https://unpkg.com/htmx.org@1.9.10"
+            integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+            crossorigin="anonymous"
+        ></script>
+        {{block "title" .}}
+        <title>Test</title>
+        {{end}}
+    </head>
+    <body id="app">
+        {{block "body" .}}
+        <h1 class="text-3xl font-bold underline text-center my-8">
+            500 internal server error
+        </h1>
+        {{end}}
+    </body>
+</html>
+{{end}}

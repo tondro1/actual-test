@@ -1,0 +1,59 @@
+{{define "title"}} <title>Register</title>{{end}} {{define "body"}}
+<title hx-swap-oob="outerHTML:title">Register</title>
+{{block "navbar" .}}
+<div>Error</div>
+{{end}}
+<div class="flex flex-col justify-center items-center">
+    <form
+        hx-trigger="submit"
+        hx-post="http://localhost:1324/register"
+        hx-swap="innerHTML"
+        hx-target="#result"
+        hx-disabled-elt="#submit-button"
+        hx-on::after-request="if (event.detail.successful) this.reset()"
+        class="w-full max-w-xs"
+    >
+        <h1 class="text-4xl font-bold text-center">Register</h1>
+        <label class="w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Username</span>
+            </div>
+            <input
+                type="text"
+                placeholder="Username"
+                name="username"
+                class="input input-bordered input-primary w-full max-w-xs"
+            />
+        </label>
+        <label class="w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                class="input input-bordered input-primary w-full max-w-xs"
+                id="password"
+            />
+            <label class="label cursor-pointer">
+                <span class="label-text">Show Password</span>
+                <input
+                    type="checkbox"
+                    class="checkbox checkbox-primary"
+                    id="togglePassword"
+                />
+            </label>
+        </label>
+        <button
+            type="submit"
+            id="submit-button"
+            class="btn btn-primary w-full max-w-xs mt-3"
+        >
+            Register
+        </button>
+    </form>
+    <div id="result"></div>
+</div>
+<script src="./js/togglePassword.js"></script>
+{{end}}
