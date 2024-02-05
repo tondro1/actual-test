@@ -1,0 +1,9 @@
+{{define "title"}} <title>Home</title>{{end}} {{define "body"}}
+<title hx-swap-oob="outerHTML:title">Home</title>
+{{block "navbar" .}}
+<div>Error</div>
+{{end}}
+<h1 class="text-6xl underline font-bold text-center mt-5">
+    You are logged in!
+</h1>
+{{end}}

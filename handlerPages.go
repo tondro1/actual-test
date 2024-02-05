@@ -3,15 +3,26 @@ package main
 import (
 	"html/template"
 	"net/http"
+
+	"github.com/tondro1/actual-test/internal/auth"
 )
 
-func renderIndex(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./public/root.html", "./public/index.html", "./public/navbar.html"))
+func renderIndex(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
+	var tmpl *template.Template
+	if uclaims.UserId != "" {
+		//logged in
+		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/loggedin/index.html", "./public/loggedin/navbar.html"))
+	} else {
+		// not logged in
+		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/index.html", "./public/navbar.html"))
+	}
+
 	if len(r.Header["Hx-Request"]) == 1 {
 		tmpl.ExecuteTemplate(w, "body", nil)
 	} else {
 		tmpl.ExecuteTemplate(w, "root", nil)
 	}
+	
 }
 
 func renderLogin(w http.ResponseWriter, r *http.Request)  {
@@ -44,4 +55,13 @@ func renderRegisterFail(w http.ResponseWriter, r *http.Request, msg string) {
 	}
 
 	tmpl.Execute(w, Data{Message: msg})
+}
+
+func renderTest(w http.ResponseWriter, r*http.Request) {
+	tmpl := template.Must(template.ParseFiles("./public/root.html", "./public/loggedin/index.html", "./public/loggedin/navbar.html"))
+	if len(r.Header["Hx-Request"]) == 1 {
+		tmpl.ExecuteTemplate(w, "body", nil)
+	} else {
+		tmpl.ExecuteTemplate(w, "root", nil)
+	}
 }

@@ -13,5 +13,5 @@ type User struct {
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
 	Username  string
-	Password  string
+	Password  []byte
 }

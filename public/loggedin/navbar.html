@@ -1,0 +1,37 @@
+{{define "navbar"}}
+<div class="flex justify-between w-full">
+    <ul class="menu menu-horizontal bg-base">
+        <li>
+            <a
+                hx-get="/"
+                hx-trigger="click"
+                hx-target="#app"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                >Home</a
+            >
+        </li>
+        <li>
+            <a
+                hx-get="/counter"
+                hx-trigger="click"
+                hx-target="#app"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                >Counter</a
+            >
+        </li>
+        <li>
+            <a
+                hx-get="/todo"
+                hx-trigger="click"
+                hx-target="#app"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+                >Todo</a
+            >
+        </li>
+    </ul>
+    <button class="btn btn-outline btn-secondary">Logout</button>
+</div>
+{{end}}
