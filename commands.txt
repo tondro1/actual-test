@@ -1,0 +1,7 @@
+// Goose
+cd sql/schema
+goose postgres "postgres://alexchoi:@localhost:5432/awesome?sslmode=disable" up
+goose postgres "postgres://alexchoi:@localhost:5432/awesome?sslmode=disable" down
+
+// SQLC
+sqlc generate

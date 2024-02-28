@@ -62,9 +62,8 @@ func main() {
 	router.Handle("/js/*", jsFs)
 	
 	router.Get("/", auth.Authenticate(renderIndex))
-	router.Get("/login", renderLogin)
-	router.Get("/register", renderRegister)
-	router.Get("/test", renderTest)
+	router.Get("/login", auth.Authenticate(renderLogin))
+	router.Get("/register", auth.Authenticate(renderRegister))
 
 	log.Println("Starting server on localhost:" + PORT)
 	http.ListenAndServe(":" + PORT, router)

@@ -23,18 +23,35 @@ func NewAccessToken(user database.User) (string, error) {
 			Issuer: "localhost",
 			Subject: user.Username,
 			IssuedAt: now.Unix(),
-			ExpiresAt: now.Add(time.Hour * 15).Unix(),
+			ExpiresAt: now.Add(time.Hour * 24).Unix(),
 		},
 	}
 
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, uclaims)
+	signedAccessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, uclaims)
 	secretKey, err := getSecretKey()
 	if err != nil {
 		return "", err
 	}
 
-	return accessToken.SignedString(secretKey)
+	return signedAccessToken.SignedString(secretKey)
 }
+
+// func NewRefreshToken() (string, error) {
+// 	now := time.Now().Local()
+// 	rclaims := jwt.StandardClaims{
+// 		Issuer: "localhost",
+// 		IssuedAt: now.Unix(),
+// 		ExpiresAt: now.Add(time.Hour * 48).Unix(),
+// 	}
+
+// 	signedRegreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, rclaims)
+// 	secretKey, err := getSecretKey()
+// 	if err != nil {
+// 		return "", err
+// 	}
+
+// 	return signedRegreshToken.SignedString(secretKey)
+// }
 
 func uuidToString(uuid pgtype.UUID) string {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid.Bytes[0:4], uuid.Bytes[4:6], uuid.Bytes[6:8], uuid.Bytes[8:10], uuid.Bytes[10:16])

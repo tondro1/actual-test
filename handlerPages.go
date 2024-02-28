@@ -25,8 +25,14 @@ func renderIndex(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaim
 	
 }
 
-func renderLogin(w http.ResponseWriter, r *http.Request)  {
-	tmpl := template.Must(template.ParseFiles("./public/root.html", "./public/login.html", "./public/navbar.html"))
+func renderLogin(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims)  {
+	var tmpl *template.Template
+	if uclaims.UserId != "" {
+		renderIndex(w, r, uclaims)
+		return	
+	} else {
+		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/login.html", "./public/navbar.html"))
+	}
 	if len(r.Header["Hx-Request"]) == 1 {
 		tmpl.ExecuteTemplate(w, "body", nil)
 	} else {
@@ -34,8 +40,15 @@ func renderLogin(w http.ResponseWriter, r *http.Request)  {
 	}
 }
 
-func renderRegister(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./public/root.html", "./public/register.html", "./public/navbar.html"))
+func renderRegister(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
+	var tmpl *template.Template
+	if uclaims.UserId != "" {
+		renderIndex(w, r, uclaims)
+		return
+	} else {
+		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/register.html", "./public/navbar.html"))
+	}
+	
 	if len(r.Header["Hx-Request"]) == 1 {
 		tmpl.ExecuteTemplate(w, "body", nil)
 	} else {
@@ -43,25 +56,16 @@ func renderRegister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func renderRegisterSuccess(w http.ResponseWriter, r *http.Request) {
+func renderRegisterSuccess(w http.ResponseWriter) {
 	tmpl := template.Must(template.ParseFiles("./public/register.success.html"))
 	tmpl.Execute(w, nil)
 }
 
-func renderRegisterFail(w http.ResponseWriter, r *http.Request, msg string) {
+func renderRegisterFail(w http.ResponseWriter, msg string) {
 	tmpl := template.Must(template.ParseFiles("./public/register.fail.html"))
 	type Data struct {
 		Message string
 	}
 
 	tmpl.Execute(w, Data{Message: msg})
-}
-
-func renderTest(w http.ResponseWriter, r*http.Request) {
-	tmpl := template.Must(template.ParseFiles("./public/root.html", "./public/loggedin/index.html", "./public/loggedin/navbar.html"))
-	if len(r.Header["Hx-Request"]) == 1 {
-		tmpl.ExecuteTemplate(w, "body", nil)
-	} else {
-		tmpl.ExecuteTemplate(w, "root", nil)
-	}
 }

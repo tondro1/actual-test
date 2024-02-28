@@ -18,7 +18,7 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error parsing form:", err)
 		w.WriteHeader(500)
-		renderRegisterFail(w, r, "Could not processs registration. Please try again later.")
+		renderRegisterFail(w, "Could not processs registration. Please try again later.")
 		return
 	}
 
@@ -27,7 +27,7 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 
 	valid, errMsg := validate(username, password)
 	if !valid {
-		renderRegisterFail(w, r, errMsg)
+		renderRegisterFail(w, errMsg)
 		return
 	}
 	// put in database
@@ -35,7 +35,7 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		renderRegisterFail(w, r, errMsg)
+		renderRegisterFail(w, errMsg)
 		log.Println(err)
 		return
 	}
@@ -51,17 +51,17 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
 			w.WriteHeader(http.StatusBadRequest)
-			renderRegisterFail(w, r, errMsg + " Username has been taken. Please choose a unique username.")
+			renderRegisterFail(w, errMsg + " Username has been taken. Please choose a unique username.")
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
-		renderRegisterFail(w, r, errMsg)
+		renderRegisterFail(w, errMsg)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	renderRegisterSuccess(w, r)
+	renderRegisterSuccess(w)
 }
 
 func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,7 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error parsing form:", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		renderRegisterFail(w, r, "Could not processs login. Please try again later.")
+		renderRegisterFail(w, "Could not processs login. Please try again later.")
 		return
 	}
 
@@ -81,7 +81,7 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error getting user from db:", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		renderRegisterFail(w, r, "Could not processs login. Please try again later.")
+		renderRegisterFail(w, "Could not processs login. Please try again later.")
 		return
 	}
 
@@ -89,7 +89,7 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error password incorrect:", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		renderRegisterFail(w, r, "Password is incorrect, please try again.")
+		renderRegisterFail(w, "Password is incorrect, please try again.")
 		return
 	}
 
@@ -105,7 +105,7 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 		Value: tokenString,
 		MaxAge: 36000,
 		SameSite: http.SameSiteStrictMode,
-		Secure: false,
+		Secure: true,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &jwt)
