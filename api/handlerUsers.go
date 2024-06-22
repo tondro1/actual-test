@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"log"
@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
+func (api *ApiCfg) Register(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error parsing form:", err)
@@ -40,7 +40,7 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	_, err = api.db.CreateUser(r.Context(), database.CreateUserParams{
+	_, err = api.DB.CreateUser(r.Context(), database.CreateUserParams{
 		ID: pgtype.UUID{Bytes: uuid.New(), Valid: true},
 		CreatedAt: pgtype.Timestamp{Time: time.Now().Local(), Valid: true},
 		UpdatedAt: pgtype.Timestamp{Time: time.Now().Local(), Valid: true},
@@ -64,7 +64,7 @@ func (api *apiCfg) register(w http.ResponseWriter, r *http.Request) {
 	renderRegisterSuccess(w)
 }
 
-func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
+func (api *ApiCfg) Login(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error parsing form:", err)
@@ -77,7 +77,7 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 	password := r.Form["password"][0]
 
 	// validate
-	user, err := api.db.GetUser(r.Context(), username)
+	user, err := api.DB.GetUser(r.Context(), username)
 	if err != nil {
 		log.Println("Error getting user from db:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -112,6 +112,38 @@ func (api *apiCfg) login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("HX-Location", "/")
 	w.WriteHeader(http.StatusAccepted)
 }
+
+func (api *ApiCfg) Logout(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
+	var accessTokenString string
+	for _, cookie := range r.Cookies() {
+		if cookie.Name == "accessToken" {
+			accessTokenString = cookie.Value
+			break
+		}
+	}
+	
+	if accessTokenString == "" {
+		log.Println("access token string empty")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	err := api.DB.Logout(r.Context(), database.LogoutParams{
+		Token: accessTokenString,
+		CreatedAt: pgtype.Timestamp{Time: time.Now().Local(), Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now().Local(), Valid: true},
+		UserID: pgtype.UUID{Bytes: uuid.MustParse(uclaims.UserId), Valid: true},
+	})
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	RenderIndex(w, r, &auth.UserClaims{})
+}
+
 
 func validate(username string, password string) (bool, string) {
 	var msg string

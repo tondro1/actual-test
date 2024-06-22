@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"html/template"
@@ -7,7 +7,7 @@ import (
 	"github.com/tondro1/actual-test/internal/auth"
 )
 
-func renderIndex(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
+func RenderIndex(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
 	var tmpl *template.Template
 	if uclaims.UserId != "" {
 		//logged in
@@ -25,10 +25,10 @@ func renderIndex(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaim
 	
 }
 
-func renderLogin(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims)  {
+func RenderLogin(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims)  {
 	var tmpl *template.Template
 	if uclaims.UserId != "" {
-		renderIndex(w, r, uclaims)
+		RenderIndex(w, r, uclaims)
 		return	
 	} else {
 		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/login.html", "./public/navbar.html"))
@@ -40,10 +40,10 @@ func renderLogin(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaim
 	}
 }
 
-func renderRegister(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
+func RenderRegister(w http.ResponseWriter, r *http.Request, uclaims *auth.UserClaims) {
 	var tmpl *template.Template
 	if uclaims.UserId != "" {
-		renderIndex(w, r, uclaims)
+		RenderIndex(w, r, uclaims)
 		return
 	} else {
 		tmpl = template.Must(template.ParseFiles("./public/root.html", "./public/register.html", "./public/navbar.html"))

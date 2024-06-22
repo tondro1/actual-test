@@ -8,6 +8,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type LoggedOut struct {
+	Token     string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	UserID    pgtype.UUID
+}
+
 type User struct {
 	ID        pgtype.UUID
 	CreatedAt pgtype.Timestamp

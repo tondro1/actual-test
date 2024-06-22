@@ -9,13 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
-	"github.com/tondro1/actual-test/internal/auth"
+	"github.com/tondro1/actual-test/api"
 	"github.com/tondro1/actual-test/internal/database"
 )
-
-type apiCfg struct {
-	db *database.Queries
-}
 
 func main() {
 	// compile templates
@@ -37,7 +33,9 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	api := apiCfg{db: database.New(conn)}
+	apiCfg := api.ApiCfg{
+		DB: database.New(conn),
+	}
 
 	router := chi.NewRouter()
 	
@@ -49,8 +47,9 @@ func main() {
 	// 	MaxAge: 300,
 	// 	AllowCredentials: true,
 	// }).Handler)
-	router.Post("/api/register", api.register)
-	router.Post("/api/login", api.login)
+	router.Post("/api/register", apiCfg.Register)
+	router.Post("/api/login", apiCfg.Login)
+	router.Put("/api/logout", apiCfg.Validate(apiCfg.Authenticate(apiCfg.Logout)))
 
 
 	// static files
@@ -61,9 +60,9 @@ func main() {
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 	router.Handle("/js/*", jsFs)
 	
-	router.Get("/", auth.Authenticate(renderIndex))
-	router.Get("/login", auth.Authenticate(renderLogin))
-	router.Get("/register", auth.Authenticate(renderRegister))
+	router.Get("/", apiCfg.Validate(apiCfg.Authenticate(api.RenderIndex)))
+	router.Get("/login", apiCfg.Validate(apiCfg.Authenticate(api.RenderLogin)))
+	router.Get("/register", apiCfg.Validate(apiCfg.Authenticate(api.RenderRegister)))
 
 	log.Println("Starting server on localhost:" + PORT)
 	http.ListenAndServe(":" + PORT, router)
